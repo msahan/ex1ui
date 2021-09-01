@@ -1,4 +1,6 @@
+import { BowlingFrame } from "./bowlingframe.model";
+
 export interface GamerPersona{
     name: number;
-    bowlingFrames: String[]
+    bowlingFrames: BowlingFrame[];
 }
