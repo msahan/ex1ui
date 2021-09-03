@@ -19,7 +19,7 @@ export class BowlinggameService {
     return this.http.get<BowlingGame[]>(`${this.apiServerUrl}/api/v1/bowling`) ; //.toPromise( )
   }
 
-  public addBowlingGames( bowlingGame : BowlingGame): Observable<BowlingGame> {
+  public save( bowlingGame : BowlingGame): Observable<BowlingGame> {
     return this.http.post<BowlingGame>(`${this.apiServerUrl}/api/v1/bowling/modify`, bowlingGame ) ; //.toPromise( )
   }
 
