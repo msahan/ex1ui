@@ -5,18 +5,43 @@
 <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
 <form [formGroup]="gameForms">
     <div class="container" >
-        
-        <div class="row align-self-center"    *ngFor = "let gameArrayElement of  gameForms.value.gameFormArray; let i=index" formArrayName="gameFormArray"  > 
-            <!-- formGroupName="{{ i }}" -->
-        <div class="col-sm align-self-center" >
-          <div contenteditable=true > <h4> {{gameArrayElement.groupName}} </h4> </div>
-           <!-- <input id="groupName-{{i}}" type="text" formControlName="bwGameFormGroup.groupName"    >   -->
-           <div *ngFor="let  bwGameFromGroup2 of gameArrayElement.formGroup;  let i=index">
-                <input id="groupName-{{i}}" type="text" formControlName="bwGameFromGroup2.groupName"    >
-            </div>
 
+        <!--trackBy:trackByFn      track by i; -->
+        <!-- this._parent.form.controls.gameFormArray.controls[0].controls.groupName.value -->
+        <!-- <div formArrayName="gameFormArray" *ngFor="let gameArrayElement of gameForms.controls.gameFormArray?.value; let i = index; trackBy:trackByFn"> 
+            <ng-container [formGroupName]="i" key=i>
+            <input contenteditable=false track by id="groupName-{{i}}" type="text" formControlName="groupName" ng-model="gameArrayElement"  >
+            </ng-container>
+        </div>  -->
+
+
+        <div class="row align-self-center"   formArrayName="gameFormArray" *ngFor="let gameArrayElement of gameForms.controls.gameFormArray?.value; let i = index; trackBy:trackByFn;" >
+            <ng-container [formGroupName]="i" key=i>
+            <div class="col-sm align-self-center" >
+              <div> <h4> <input contenteditable=false track by id="groupName-{{i}}" type="text" formControlName="groupName" ng-model="gameArrayElement" class="bg-transparent border-0 box-shadow-only-hover" > </h4> </div>
+              <!-- <div *ngIf="gameArrayElement.gamerPersonas[0] != undefined">  {{gameArrayElement.gamerPersonas[0].name}}  </div> -->
+              {{gameArrayElement.groupName}}
+
+              <div *ngIf="gameArrayElement.gamerPersonas[0] != null; else elseBlock">{{gameArrayElement.gamerPersonas[0].name}}  </div>
+              <ng-template #elseBlock> No players played in this game </ng-template>
+              <div class="row align-self-center" formArrayName="gamerPersonasArray" *ngFor="let gamerCntrl of gameArrayElement.gamerPersonas.controls?.value; let j = index; trackBy:trackByFn;" >
+                <!-- {{gamerCntrl}} -->
+                
+                <!-- <div class="card"  >
+                    <div class="card-body" >
+                        <div class="card-title">  <h5>  {{gamerCntrl.value}} </h5> </div>
+                    </div>
+                </div> -->
+              </div>
+      
+
+            </div>
+            </ng-container>
         </div>
-        </div>
+
+        
+
+
     </div>
 </form> 
 
@@ -31,7 +56,7 @@
         
 
         <div class="row"    *ngFor = "let gamer of bwGame.gamerPersonas;" ui:sortable ng:model="list" > 
-            <div class="card"  >
+            <div class="card box-shadow-only-hover"  >
                 <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
                 <div class="card-body" >
                     <div class="card-title">  <h5>  {{gamer.name}} </h5></div>
