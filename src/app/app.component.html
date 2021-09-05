@@ -3,8 +3,8 @@
 </div> -->
 
 <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
-<form [formGroup]="gameForms">
-    <div class="container" >
+<form *ngIf="gameForms" [formGroup]="gameForms">
+    <!-- <div class="container" > -->
 
         <!--trackBy:trackByFn      track by i; -->
         <!-- this._parent.form.controls.gameFormArray.controls[0].controls.groupName.value -->
@@ -13,208 +13,36 @@
             <input contenteditable=false track by id="groupName-{{i}}" type="text" formControlName="groupName" ng-model="gameArrayElement"  >
             </ng-container>
         </div>  -->
+        <!-- <div formArrayName="gameFormArray" >  -->
+
+            <!-- [formGroupName]="gameForms" -->
+        <ng-container *ngIf="gameForms.controls['gameFormArray']">
+            <ng-container formArrayName='gameFormArray' >
+                <div  *ngFor="let gameArrayElement of gameForms.controls['gameFormArray'].value; index as i; track by i"  >
+                <!-- <div  *ngFor="let gameArrayElement of gameForms.value.gameFormArray; index as gameIndex; trackBy:trackByFn;"  > -->
+                    <!-- {{gameArrayElement.groupName}} -->
+                    <ng-container [formGroupName]="i">
+                        <div> <h4> <input formControlName="groupName" class="bg-transparent border-0 box-shadow-only-hover" /> </h4> </div>
+
+                        <ng-container formArrayName='gamerPersonas' >
+                            <!-- *ngIf="gameArrayElement.gamerPersonas"  -->
+                            <div   *ngFor = "let gamerPersona of gameArrayElement.gamerPersonas; let gamePersonaIndex = index; let gamePersonaIndex = index; track by gamePersonaIndex" > 
+                            <!-- <div   *ngFor = "let gamerPersona of gameArrayElement['gamerPersonas'].value; let gamePersonaIndex = index;" formGroupName="gamePersonaIndex">  -->
+                                <!-- {{gamerPersona}} -->
+                                <!-- class="row"   -->
+                                <ng-container [formGroupName]="gamePersonaIndex">
+                                    <div>   <input formControlName="name" class="bg-transparent border-0 box-shadow-only-hover" />   </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
 
 
-        <div class="row align-self-center"   formArrayName="gameFormArray" *ngFor="let gameArrayElement of gameForms.controls.gameFormArray?.value; let i = index; trackBy:trackByFn;" >
-            <ng-container [formGroupName]="i" key=i>
-            <div class="col-sm align-self-center" >
-              <div> <h4> <input contenteditable=false track by id="groupName-{{i}}" type="text" formControlName="groupName" ng-model="gameArrayElement" class="bg-transparent border-0 box-shadow-only-hover" > </h4> </div>
-              <!-- <div *ngIf="gameArrayElement.gamerPersonas[0] != undefined">  {{gameArrayElement.gamerPersonas[0].name}}  </div> -->
-              {{gameArrayElement.groupName}}
+                    </ng-container>
 
-              <div *ngIf="gameArrayElement.gamerPersonas[0] != null; else elseBlock">{{gameArrayElement.gamerPersonas[0].name}}  </div>
-              <ng-template #elseBlock> No players played in this game </ng-template>
-              <div class="row align-self-center" formArrayName="gamerPersonasArray" *ngFor="let gamerCntrl of gameArrayElement.gamerPersonas.controls?.value; let j = index; trackBy:trackByFn;" >
-                <!-- {{gamerCntrl}} -->
-                
-                <!-- <div class="card"  >
-                    <div class="card-body" >
-                        <div class="card-title">  <h5>  {{gamerCntrl.value}} </h5> </div>
-                    </div>
-                </div> -->
-              </div>
-      
-
-            </div>
+                </div> 
             </ng-container>
-        </div>
+        </ng-container>
+        <!-- </div> -->
 
-        
-
-
-    </div>
-</form> 
-
-<!-- [formControl]="bwGameFrm.groupName" -->
-
-<div class="container">
-
-    <div class="row align-self-center"    *ngFor = "let bwGame of bowlingGames;" >
-      <div class="col-sm align-self-center" >
-        <div> <h4> {{bwGame.groupName}} </h4> </div>
-
-        
-
-        <div class="row"    *ngFor = "let gamer of bwGame.gamerPersonas;" ui:sortable ng:model="list" > 
-            <div class="card box-shadow-only-hover"  >
-                <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
-                <div class="card-body" >
-                    <div class="card-title">  <h5>  {{gamer.name}} </h5></div>
-                    <!-- <p class="card-text">Scores</p> -->
-                    <!-- <div class="media box-shadow-only-hover hover-top border-all-1 border-color-gray">  -->
-                    <table class="table-responsive-sm "  >
-                        <tr class="p-1 table-dark m-0 p-0" > 
-                            <td class="p-2 align-middle">
-                                <div class="icon-50 theme-bg  border-radius-50 dark-font-color align-middle d-inline-block">
-                                    <i class="string ">{{ gamer.playOrder }}</i>
-                                </div>
-                            </td>
-                            <td  > 
-                                <div class="container table-dark"  >
-                                    <div class="row justify-content-start m-0">
-                                        <div class="col-xs"  *ngFor = "let bowlingFrame of gamer.bowlingFrames;" >
-                                            <table class="table  table-dark m-0" style="width: 6rem; " >
-
-                                                <!-- style="width: 6rem;"  -->
-                                                <tr >
-                                                    <td align ="right" > {{ bowlingFrame.scores[0] }} </td>
-                                                    <td align ="right" > {{ bowlingFrame.scores[1] }} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td class="border border-light" align ="right" > {{ bowlingFrame.frameScore }} </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-
-      </div>
-    </div>
-  </div>
-
-<!-- 
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-xl-3">
-            <div class="card m-b-30">
-                <div class="card-body row">
-                    <div class="col-6">
-                        <a href=""><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" class="img-fluid rounded-circle w-60"></a>
-                    </div>
-                    <div class="col-6 card-title align-self-center mb-0">
-                        <h5>Emma A. Main</h5>
-                        <p class="m-0">Graphics Designer</p>
-                    </div>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Email : <a href="#">PaulGoyette@gmail.com</a></li>
-                    <li class="list-group-item"><i class="fa fa-phone float-right"></i>Phone : 000 123-456</li>
-                </ul>
-                <div class="card-body">
-                    <div class="float-right btn-group btn-group-sm">
-                        <a href="#" class="btn btn-primary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
-                        <a href="#" class="btn btn-secondary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-times"></i></a>
-                    </div>
-                    <ul class="social-links list-inline mb-0">
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Facebook"><i class="fa fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Twitter"><i class="fa fa-twitter"></i></a></li>
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Skype"><i class="fa fa-skype"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card m-b-30">
-                <div class="card-body row">
-                    <div class="col-6">
-                        <a href=""><img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="" class="img-fluid rounded-circle w-60"></a>
-                    </div>
-                    <div class="col-6 card-title align-self-center mb-0">
-                        <h5>Paul L. Goyette</h5>
-                        <p class="m-0">Graphics Designer</p>
-                    </div>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Email : <a href="#">PaulGoyette@gmail.com</a></li>
-                    <li class="list-group-item"><i class="fa fa-phone float-right"></i>Phone : 000 123-456</li>
-                </ul>
-                <div class="card-body">
-                    <div class="float-right btn-group btn-group-sm">
-                        <a href="#" class="btn btn-primary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
-                        <a href="#" class="btn btn-secondary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-times"></i></a>
-                    </div>
-                    <ul class="social-links list-inline mb-0">
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Facebook"><i class="fa fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Twitter"><i class="fa fa-twitter"></i></a></li>
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Skype"><i class="fa fa-skype"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card m-b-30">
-                <div class="card-body row">
-                    <div class="col-6">
-                        <a href=""><img src="https://bootdey.com/img/Content/avatar/avatar5.png" alt="" class="img-fluid rounded-circle w-60"></a>
-                    </div>
-                    <div class="col-6 card-title align-self-center mb-0">
-                        <h5>Jonathan Smith</h5>
-                        <p class="m-0">Graphics Designer</p>
-                    </div>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Email : <a href="#">PaulGoyette@gmail.com</a></li>
-                    <li class="list-group-item"><i class="fa fa-phone float-right"></i>Phone : 000 123-456</li>
-                </ul>
-                <div class="card-body">
-                    <div class="float-right btn-group btn-group-sm">
-                        <a href="#" class="btn btn-primary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
-                        <a href="#" class="btn btn-secondary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-times"></i></a>
-                    </div>
-                    <ul class="social-links list-inline mb-0">
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Facebook"><i class="fa fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Twitter"><i class="fa fa-twitter"></i></a></li>
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Skype"><i class="fa fa-skype"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card m-b-30">
-                <div class="card-body row">
-                    <div class="col-6">
-                        <a href=""><img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="" class="img-fluid rounded-circle w-60"></a>
-                    </div>
-                    <div class="col-6 card-title align-self-center mb-0">
-                        <h5>Lily J. Ford</h5>
-                        <p class="m-0">Graphics Designer</p>
-                    </div>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><i class="fa fa-envelope float-right"></i>Email : <a href="#">PaulGoyette@gmail.com</a></li>
-                    <li class="list-group-item"><i class="fa fa-phone float-right"></i>Phone : 000 123-456</li>
-                </ul>
-                <div class="card-body">
-                    <div class="float-right btn-group btn-group-sm">
-                        <a href="#" class="btn btn-primary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
-                        <a href="#" class="btn btn-secondary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-times"></i></a>
-                    </div>
-                    <ul class="social-links list-inline mb-0">
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Facebook"><i class="fa fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Twitter"><i class="fa fa-twitter"></i></a></li>
-                        <li class="list-inline-item"><a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Skype"><i class="fa fa-skype"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
+    <!-- </div> -->
+</form>
