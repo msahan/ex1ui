@@ -71,6 +71,7 @@ export class AppComponent implements OnInit , OnDestroy {
             if( bowlingGame.gamerPersonas != undefined  && bowlingGame.gamerPersonas != null ){
               bowlingGame.gamerPersonas.forEach( (gamer, index2) => {
                     const bGamer = this.fb.group({
+                      playOrder:      new FormControl(gamer.playOrder ,  Validators.required ),
                       name:           new FormControl(gamer.name ,  Validators.required ),
                       bowlingFrames:  this.fb.array( [] ) as FormArray
                       }
@@ -93,6 +94,14 @@ export class AppComponent implements OnInit , OnDestroy {
                                   });
                                   (bFrame.controls.scores as FormArray).push(bFrameScore);
                               } );
+                              const remainingBallTurns : number = 2 - ( bFrame.controls.scores as FormArray ).length ;
+                              for (let index5 = 0; remainingBallTurns > 0 && index5 < remainingBallTurns; index5++) {
+                                const bFrameScore = this.fb.group({
+                                  ballIndex : new FormControl(remainingBallTurns-1-index5),
+                                  score     : new FormControl(  ) 
+                                });
+                                (bFrame.controls.scores as FormArray).push(bFrameScore);
+                              }
                             }
 
                           (bGamer.controls.bowlingFrames as FormArray).push(bFrame);
