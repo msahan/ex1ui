@@ -18,24 +18,44 @@
             <!-- [formGroupName]="gameForms" -->
         <ng-container *ngIf="gameForms.controls['gameFormArray']">
             <ng-container formArrayName='gameFormArray' >
-                <div  *ngFor="let gameArrayElement of gameForms.controls['gameFormArray'].value; index as i; track by i"  >
-                <!-- <div  *ngFor="let gameArrayElement of gameForms.value.gameFormArray; index as gameIndex; trackBy:trackByFn;"  > -->
-                    <!-- {{gameArrayElement.groupName}} -->
+                <div  *ngFor="let gameArrayElement of gameForms.controls['gameFormArray'].value; index as i; trackBy:trackByFn"  >
+                    
                     <ng-container [formGroupName]="i">
                         <div> <h4> <input formControlName="groupName" class="bg-transparent border-0 box-shadow-only-hover" /> </h4> </div>
 
-                        <ng-container formArrayName='gamerPersonas' >
-                            <!-- *ngIf="gameArrayElement.gamerPersonas"  -->
-                            <div   *ngFor = "let gamerPersona of gameArrayElement.gamerPersonas; let gamePersonaIndex = index; let gamePersonaIndex = index; track by gamePersonaIndex" > 
-                            <!-- <div   *ngFor = "let gamerPersona of gameArrayElement['gamerPersonas'].value; let gamePersonaIndex = index;" formGroupName="gamePersonaIndex">  -->
-                                <!-- {{gamerPersona}} -->
-                                <!-- class="row"   -->
+                        <ng-container *ngIf="gameArrayElement.gamerPersonas" formArrayName='gamerPersonas' >
+                            <div   *ngFor = "let gamerPersona of gameArrayElement.gamerPersonas;  let gamePersonaIndex = index;  trackBy:trackByFn" > 
                                 <ng-container [formGroupName]="gamePersonaIndex">
                                     <div>   <input formControlName="name" class="bg-transparent border-0 box-shadow-only-hover" />   </div>
+
+                                    <ng-container *ngIf="gamerPersona.bowlingFrames" formArrayName='bowlingFrames'  >
+                                        <div   *ngFor = "let bowlingFrame of gamerPersona.bowlingFrames;  let bowlingFrameIndex = index;  trackBy:trackByFn"   > 
+                                            <ng-container [formGroupName]="bowlingFrameIndex">
+                                                <div>   <input contenteditable=false formControlName="frameNumber" class="bg-transparent border-0"   />   </div>
+
+                                                <ng-container *ngIf="bowlingFrame.scores" formArrayName='scores'  >
+                                                    <div   *ngFor = "let score of bowlingFrame.scores;  let ballIndex = index;  trackBy:trackByFn"   > 
+                                                        <ng-container [formGroupName]="ballIndex">
+                                                            
+                                                            <div> ->  <input contenteditable=false formControlName="ballIndex" class="bg-transparent border-0"   />   </div>
+                                                            <div> --- <input  formControlName="score" class="bg-transparent border-0"   />   </div>
+
+
+                                                        </ng-container>
+                                                    </div>
+
+                                                </ng-container>
+
+
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+
+
+
                                 </ng-container>
                             </div>
                         </ng-container>
-
 
                     </ng-container>
 
@@ -46,3 +66,8 @@
 
     <!-- </div> -->
 </form>
+
+
+                           <!-- <div   *ngFor = "let gamerPersona of gameArrayElement['gamerPersonas'].value; let gamePersonaIndex = index;" formGroupName="gamePersonaIndex">  -->
+                                <!-- {{gamerPersona}} -->
+                                <!-- class="row"   -->

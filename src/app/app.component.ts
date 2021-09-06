@@ -71,10 +71,35 @@ export class AppComponent implements OnInit , OnDestroy {
             if( bowlingGame.gamerPersonas != undefined  && bowlingGame.gamerPersonas != null ){
               bowlingGame.gamerPersonas.forEach( (gamer, index2) => {
                     const bGamer = this.fb.group({
-                      name:      new FormControl(gamer.name ,  Validators.required ),
-                      // bowlingFrames
+                      name:           new FormControl(gamer.name ,  Validators.required ),
+                      bowlingFrames:  this.fb.array( [] ) as FormArray
                       }
                     );
+                    if( gamer.bowlingFrames != undefined && gamer.bowlingFrames != null ){
+                        gamer.bowlingFrames.forEach( ( bowlingFrame, index3)  => {
+                          const bFrame = this.fb.group({
+                            frameNumber : new FormControl(bowlingFrame.frameNumber),
+                            // frameAttemptId : number,
+                            scores: this.fb.array( [] ) as FormArray , // bowlingFrame.scores 
+                            // frameScore: number,
+                            // IsInvalidated : boolean;
+                          });
+
+                          if( bowlingFrame.scores != undefined && bowlingFrame.scores != null ){
+                              bowlingFrame.scores.forEach( ( scoreValue , index4) => {
+                                const bFrameScore = this.fb.group({
+                                    ballIndex : new FormControl(index4),
+                                    score     : new FormControl( scoreValue ) 
+                                  });
+                                  (bFrame.controls.scores as FormArray).push(bFrameScore);
+                              } );
+                            }
+
+                          (bGamer.controls.bowlingFrames as FormArray).push(bFrame);
+                        });
+
+                    }
+
                     // (bgame.controls.gamerPersonas as FormArray).push(bGamer);
                     (bgame.controls.gamerPersonas as FormArray).push(bGamer);
                 }
