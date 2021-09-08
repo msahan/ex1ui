@@ -3,9 +3,9 @@
 
         <ng-container *ngIf="gameForms.controls['gamesArray']">
             <ng-container formArrayName='gamesArray' >
-                <!-- <div class="row "  *ngFor="let gameArrayElement of gameForms.controls['gamesArray'].value as FormArray; index as groupIndex; trackBy:trackByFn"  > -->
-                <div class="row "  *ngFor="let gameArrayElement of this.gamesArray?.controls as FormArray; index as groupIndex;  trackBy:trackByFn;  "  >
-                <!-- <div class="row "  *ngFor="let gameArrayElement as FormGroup of this.gameForms.value.gamesArray  as FormArray;  index as groupIndex;  trackBy:trackByFn"  > -->
+
+                <!-- <div class="row "  *ngFor="let gameArrayElement of gameForms.controls['gamesArray'].controls as FormArray; index as groupIndex;  trackBy:trackByFn;  "  > -->
+                <div class="row "  *ngFor="let gameArrayElement of this.gamesArray.controls as FormArray; index as groupIndex;  trackBy:trackByFn;  "  >
                     <div class="col ">
                         <ng-container [formGroupName]="groupIndex">
                             <!-- <div> <h4> <input formControlName="groupName" class="form-control bg-transparent border-0 box-shadow-only-hover" /> </h4> </div> -->
@@ -19,20 +19,18 @@
                                 <!-- value[0].gamerPersonas.controls  -->
                                 <!-- method output: {{ this.gamesArray.controls[0] }} -->
                                 <!-- .controls[0].controls['groupName'].touched  -->
-                                <!-- htmlContext: ({{  gamerPersonas   }}) -->
+                                <!-- htmlContext: ({{  gamesArray.controls[groupIndex]  }}) -->
                                 <!-- Exceeded recommended length  -->
                             </div>
-                            <!-- this.myForm['controls'].child['controls'].id.valid -->
-                            <!-- value.gamesArray[groupIndex].controls['groupName']  -->
-                            <!-- <ng-container *ngIf="gameArrayElement.gamerPersonas" formArrayName='gamerPersonas' > -->
-                            <!-- <ng-container  formArrayName='gamerPersonas' > -->
-                                <!-- *ngIf="gameArrayElement.value.gamerPersonas" -->
 
-<!-- <ng-container formArrayName='gamerPersonas' > -->
-                            <!-- <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.controls['gamerPersonas'].controls;  let gamePersonaIndex = index;  trackBy:trackByFn" >  -->
-                            <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.value.gamerPersonas as FormArray  ;  let gamePersonaIndex = index;  trackBy:trackByFn" > 
-                            <!-- <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.value.gamerPersonas as FormArray  ;  let gamePersonaIndex = index;  trackBy:trackByFn" >  -->
-                                <ng-container  formArrayName='gamerPersonas' >
+
+
+                            
+
+                            <ng-container  formArrayName='gamerPersonas' > <!-- *ngIf="gameArrayElement.value.gamerPersonas" -->
+                                <!-- <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.controls['gamerPersonas'] as FormArray  ;  let gamePersonaIndex = index;  trackBy:trackByFn" >  -->
+                                <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.value.gamerPersonas as FormArray  ;  let gamePersonaIndex = index;  trackBy:trackByFn" > 
+                                <!-- <ng-container  formArrayName='gamerPersonas' > *ngIf="gameArrayElement.value.gamerPersonas" -->
                                     <div class="col">
                                         <div class="card box-shadow-only-hover"  >
                                             <table class="table-responsive-sm "  >
@@ -77,16 +75,6 @@
                                                                                                 </td>
 
 
-                                                                                                <!-- && scoreRecord.touched  && scoreRecord.dirty " class="alert alert-danger -->
-                                                                                                <!-- <div *ngIf="scoreRecord.errors.max" style="background-color: red" > Value exceeds the limits allowed </div> -->
-                                                                                                
-                                                                                                <!-- <td>
-                                                                                                    <div *ngIf="scoreRecord.invalid && scoreRecord.touched " >
-                                                                                                        {{scoreRecord.invalid}}
-                                                                                                    </div>
-                                                                                                    -{{scoreRecord.errors}}-
-                                                                                                </td> -->
-
 
                                                                                             </ng-container>
                                                                                         </ng-container>
@@ -109,16 +97,14 @@
 
                                         </div>
                                     </div>
-                                </ng-container>
                             </div>
-<!-- </ng-container> -->
-
                         </ng-container>
+                    </ng-container>
                     </div>
                 </div> 
             </ng-container>
         </ng-container>
 
 </form>
-<pre>{{ this.gameForms.controls['gamesArray'] | json }}</pre>
+<!-- <pre>{{ this.gameForms.value | json }}</pre> -->
 

@@ -41,11 +41,6 @@ export class AppComponent implements OnInit , OnDestroy {
       ( response : BowlingGame[] ) => {
         this.bowlingGames = response;
         this.gameForms = this.createGameForm( this.bowlingGames );
-        // this.gameForms = this.createGames( this.bowlingGames );
-
-        // console.log(JSON.stringify(this.gameForms.controls['gamesArray']));
-        // console.log(JSON.stringify(this.gameForms) );
-
       },
       (error: HttpErrorResponse ) => {
         this.handleError(error);
@@ -60,42 +55,9 @@ export class AppComponent implements OnInit , OnDestroy {
 
   }
 
-  // // get gamerPersonas( i : number ) {
-  // //   // let gp = ( this.gameForms.get('gamesArray') as FormArray ).controls[ i ] as ;
-  // //   // return ( .gamerPersonas as FormArray) ;
-  // // }
-
-  // private createGames(pBowlingGames : BowlingGame[]): FormGroup {
-
-  //   var fgrp : FormGroup = this.fb.group( { gamesArray :  this.fb.array([]) as FormArray } );  
-
-  //   // if( pBowlingGames != undefined ){ 
-  //   //   pBowlingGames.forEach(
-  //   //     (bowlingGame, index) => { 
-  //   //       let bGameGroup =       this.fb.group( { 
-  //   //           id:             new FormControl(bowlingGame.id),
-  //   //           laneID:         new FormControl(bowlingGame.laneID),
-  //   //           groupName:      new FormControl(bowlingGame.groupName , [ Validators.required, Validators.maxLength(40)] ),
-  //   //           gameDate:       new FormControl(bowlingGame.gameDate), 
-  //   //           created:        new FormControl(bowlingGame.created), 
-  //   //           gamerPersonas:  this.fb.array( [] ) as FormArray
-  //   //         } );
-
-  //   //         (fgrp.controls.gamesArray as FormArray).push( bGameGroup as FormGroup );
-  //   //       }
-  //   //   ) ;
-  //   // }    
-
-  //   return fgrp; 
-        
-  // }
   private createGameForm(pBowlingGames : BowlingGame[]): FormGroup {
 
-  //  var fgrp : FormGroup = new FormGroup({ gamesArray: new FormArray([]) });  
     var fgrp : FormGroup = this.fb.group( { gamesArray :  this.fb.array([]) as FormArray } );  
-
-    // var fgrp : FormGroup = this.fb.group( { gamesArray :  FormArray } );  
-    // fgrp.setControl( 'gamesArray', this.fb.array([]) ) ;
 
     if( pBowlingGames != undefined ){ 
       pBowlingGames.forEach(
