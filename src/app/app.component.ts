@@ -1,11 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Subject, throwError } from 'rxjs'; //
 import { BowlingGame } from './shared/bowlinggame.model';
 import { BowlinggameService } from './shared/bowlinggame.service';
-import { FormArray, FormBuilder, FormControl, FormGroup , Validators} from '@angular/forms';
-import { debounceTime, retry, switchMap, takeUntil } from 'rxjs/operators';
-//import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup , MinValidator, Validators} from '@angular/forms';
+// import { stringify } from '@angular/compiler/src/util';
+//import { debounceTime, retry, switchMap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +18,16 @@ export class AppComponent implements OnInit , OnDestroy {
   //to be made private 
   public bowlingGames: BowlingGame[] | undefined;
   public gameForms: FormGroup ;
+  // public static jsonLib : JSON  ;
   // private gameForms1:  FormGroup  = new FormGroup({});
   private unsubscribe = new Subject<void>();
 
   constructor(private bowlingGameService : BowlinggameService , private fb: FormBuilder ) {
     // this.gameForms = fb.group({ games :  this.bowlingGames } ) ;
-    this.gameForms = fb.group({ } ) ;
+    this.gameForms = this.fb.group({ } ) ;
+    // AppComponent.jsonLib = JSON;
+    // console.log(JSON.stringify(this.gameForms));
+
   }
 
   // constructor(private bowlingGameService : BowlinggameService ){}
@@ -37,40 +41,77 @@ export class AppComponent implements OnInit , OnDestroy {
       ( response : BowlingGame[] ) => {
         this.bowlingGames = response;
         this.gameForms = this.createGameForm( this.bowlingGames );
-        // this.gameForms1 = this.createGameForm( this.bowlingGames );
+        // this.gameForms = this.createGames( this.bowlingGames );
+
+        // console.log(JSON.stringify(this.gameForms.controls['gamesArray']));
+        // console.log(JSON.stringify(this.gameForms) );
+
       },
       (error: HttpErrorResponse ) => {
         this.handleError(error);
       }
     );
+
   }
   
-  get gameFormArray() {
-    var instGameFormArray = this.gameForms.get('gameFormArray') as FormArray;
-    return instGameFormArray;
+  get gamesArray() {
+    var instgamesArray = this.gameForms.get('gamesArray') as FormArray;
+    return instgamesArray;
 
   }
 
+  // // get gamerPersonas( i : number ) {
+  // //   // let gp = ( this.gameForms.get('gamesArray') as FormArray ).controls[ i ] as ;
+  // //   // return ( .gamerPersonas as FormArray) ;
+  // // }
+
+  // private createGames(pBowlingGames : BowlingGame[]): FormGroup {
+
+  //   var fgrp : FormGroup = this.fb.group( { gamesArray :  this.fb.array([]) as FormArray } );  
+
+  //   // if( pBowlingGames != undefined ){ 
+  //   //   pBowlingGames.forEach(
+  //   //     (bowlingGame, index) => { 
+  //   //       let bGameGroup =       this.fb.group( { 
+  //   //           id:             new FormControl(bowlingGame.id),
+  //   //           laneID:         new FormControl(bowlingGame.laneID),
+  //   //           groupName:      new FormControl(bowlingGame.groupName , [ Validators.required, Validators.maxLength(40)] ),
+  //   //           gameDate:       new FormControl(bowlingGame.gameDate), 
+  //   //           created:        new FormControl(bowlingGame.created), 
+  //   //           gamerPersonas:  this.fb.array( [] ) as FormArray
+  //   //         } );
+
+  //   //         (fgrp.controls.gamesArray as FormArray).push( bGameGroup as FormGroup );
+  //   //       }
+  //   //   ) ;
+  //   // }    
+
+  //   return fgrp; 
+        
+  // }
   private createGameForm(pBowlingGames : BowlingGame[]): FormGroup {
 
-//    var fgrp : FormGroup = new FormGroup({ gameFormArray: new FormArray([]) });  
-    var fgrp : FormGroup = this.fb.group( { gameFormArray: this.fb.array([]) } );  
+  //  var fgrp : FormGroup = new FormGroup({ gamesArray: new FormArray([]) });  
+    var fgrp : FormGroup = this.fb.group( { gamesArray :  this.fb.array([]) as FormArray } );  
+
+    // var fgrp : FormGroup = this.fb.group( { gamesArray :  FormArray } );  
+    // fgrp.setControl( 'gamesArray', this.fb.array([]) ) ;
 
     if( pBowlingGames != undefined ){ 
       pBowlingGames.forEach(
         (bowlingGame, index) => { 
-          const bgame =       this.fb.group( { 
+          let bGameGroup =       this.fb.group( { 
               // key:            index,
               id:             new FormControl(bowlingGame.id),
               laneID:         new FormControl(bowlingGame.laneID),
-              groupName:      new FormControl(bowlingGame.groupName ,  Validators.required ),
+              groupName:      new FormControl(bowlingGame.groupName , [ Validators.required, Validators.maxLength(40)] ),
               gameDate:       new FormControl(bowlingGame.gameDate), 
               created:        new FormControl(bowlingGame.created), 
               gamerPersonas:  this.fb.array( [] ) as FormArray
             } );
             if( bowlingGame.gamerPersonas != undefined  && bowlingGame.gamerPersonas != null ){
               bowlingGame.gamerPersonas.forEach( (gamer, index2) => {
-                    const bGamer = this.fb.group({
+                    let bGamer = this.fb.group({
                       playOrder:      new FormControl(gamer.playOrder ,  Validators.required ),
                       name:           new FormControl(gamer.name ,  Validators.required ),
                       bowlingFrames:  this.fb.array( [] ) as FormArray
@@ -78,7 +119,7 @@ export class AppComponent implements OnInit , OnDestroy {
                     );
                     if( gamer.bowlingFrames != undefined && gamer.bowlingFrames != null ){
                         gamer.bowlingFrames.forEach( ( bowlingFrame, index3)  => {
-                          const bFrame = this.fb.group({
+                          let bFrame = this.fb.group({
                             frameNumber : new FormControl(bowlingFrame.frameNumber),
                             // frameAttemptId : number,
                             scores: this.fb.array( [] ) as FormArray , // bowlingFrame.scores 
@@ -87,19 +128,41 @@ export class AppComponent implements OnInit , OnDestroy {
                           });
 
                           if( bowlingFrame.scores != undefined && bowlingFrame.scores != null ){
+                              const frameMaxScore : number = 10;
+                              let frameRawScoreTotal : number = 0;
+                              let frameRemainderScore : number = 0;
+                              let isTurnAllowed: boolean = false;
+
                               bowlingFrame.scores.forEach( ( scoreValue , index4) => {
-                                const bFrameScore = this.fb.group({
+                                frameRemainderScore = frameMaxScore - frameRawScoreTotal;
+                                isTurnAllowed = frameRemainderScore > 0 ? true : false;
+                                let bFrameScore = this.fb.group({
                                     ballIndex : new FormControl(index4),
-                                    score     : new FormControl( scoreValue ) 
+                                    // score     : new FormControl( scoreValue,  [ Validators.required, Validators.min(0), Validators.max(frameRemainderScore), Validators.maxLength(2) ]    ),
+                                    score     : new FormControl( scoreValue,  [ Validators.required, Validators.min(0), 
+                                                                                ( frmControlInput : AbstractControl) => Validators.max( frameRemainderScore )( frmControlInput )
+                                                                                , Validators.maxLength(2) ]    ),
+                                    
+                                    
+                                    remainderScore : frameRemainderScore,
+                                    isEditable: isTurnAllowed,
+                                    // validators: [ Validators.max(frameRemainderScore) ]
                                   });
+                                  frameRawScoreTotal = frameRawScoreTotal + scoreValue;
                                   (bFrame.controls.scores as FormArray).push(bFrameScore);
                               } );
+                              //TODO - repeated logic - modularize
                               const remainingBallTurns : number = 2 - ( bFrame.controls.scores as FormArray ).length ;
+                              isTurnAllowed = frameRemainderScore > 0 ? true : false;
                               for (let index5 = 0; remainingBallTurns > 0 && index5 < remainingBallTurns; index5++) {
+                                frameRemainderScore = frameMaxScore - frameRawScoreTotal;
                                 const bFrameScore = this.fb.group({
                                   ballIndex : new FormControl(remainingBallTurns-1-index5),
-                                  score     : new FormControl(  ) 
+                                  score     : new FormControl( '',  Validators.max(frameRemainderScore) ) , //Validators.max(frameRemainderScore)
+                                  remainder : frameRemainderScore,
+                                  isEditable : isTurnAllowed 
                                 });
+                                //frameRawScoreTotal = frameRawScoreTotal + scoreValue;
                                 (bFrame.controls.scores as FormArray).push(bFrameScore);
                               }
                             }
@@ -110,12 +173,12 @@ export class AppComponent implements OnInit , OnDestroy {
                     }
 
                     // (bgame.controls.gamerPersonas as FormArray).push(bGamer);
-                    (bgame.controls.gamerPersonas as FormArray).push(bGamer);
+                    (bGameGroup.controls.gamerPersonas as FormArray).push(bGamer as FormGroup );
                 }
               );
             }
-            // (fgrp.controls.gameFormArray as FormArray).push(bgame);
-            (fgrp.controls.gameFormArray as FormArray).push(bgame);
+            // (fgrp.controls.gamesArray as FormArray).push(bgame);
+            (fgrp.controls.gamesArray as FormArray).push( bGameGroup as FormGroup );
           }
       ) ;
     }    
@@ -126,36 +189,23 @@ export class AppComponent implements OnInit , OnDestroy {
     //   takeUntil(this.unsubscribe)
     // ).subscribe(() => console.log('Saved'))   
 
+    // console.log(JSON.stringify(fgrp) );
+
     return fgrp;
 
-    // this.userData.forEach(
-    //   (item) => {
-    
-    //     const userGroup = new FormGroup({
-    //       id: new FormControl(item.id),
-    //       group: new FormControl(item.group),
-    //       userDetails: new FormArray([])
-    //     });
-    
-    //     item.info.forEach((info) => {
-    //       const userDetail = new FormGroup({
-    //         name: new FormControl(info.name),
-    //         number: new FormControl(info.number),
-    //         remarks: new FormControl(info.remarks),
-    //         active: new FormControl(info.active)
-    //       });
-    //       (userGroup.controls.userDetails as FormArray).push(userDetail);
-    //     });
-    
-    //     (this.userForm.controls.userGroups as FormArray).push(userGroup);
-    //   }
-    // );
+
 
   }
 
 
+  public  typeOfForComp(value : any ) {
 
-
+    
+    return AppComponent.toStringObj(value); 
+  }
+  private static toStringObj( value: any ){
+    return JSON.stringify(value);
+  }
   
   handleError(error: HttpErrorResponse) {
     let errorMessage = 'Unknown error!';
