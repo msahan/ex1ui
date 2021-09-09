@@ -54,7 +54,10 @@ export class AppComponent implements OnInit , OnDestroy {
     return instgamesArray;
 
   }
+  get gamerPersonasCurr() {
+    return this.gameForms.get('gamesArray')?.get('gamerPersonas') as FormArray;
 
+  }
   private createGameForm(pBowlingGames : BowlingGame[]): FormGroup {
 
     var fgrp : FormGroup = this.fb.group( { gamesArray :  this.fb.array([]) as FormArray } );  
@@ -160,14 +163,14 @@ export class AppComponent implements OnInit , OnDestroy {
   }
 
 
-  public  typeOfForComp(value : any ) {
+  // public  typeOfForComp(value : any ) {
 
     
-    return AppComponent.toStringObj(value); 
-  }
-  private static toStringObj( value: any ){
-    return JSON.stringify(value);
-  }
+  //   return AppComponent.toStringObj(value); 
+  // }
+  // private static toStringObj( value: any ){
+  //   return JSON.stringify(value);
+  // }
   
   handleError(error: HttpErrorResponse) {
     let errorMessage = 'Unknown error!';

@@ -4,8 +4,9 @@
         <ng-container *ngIf="gameForms.controls['gamesArray']">
             <ng-container formArrayName='gamesArray' >
 
+                <div class="row "  *ngFor="let gameArrayElement of gamesArray.controls; index as groupIndex;  trackBy:trackByFn;  "  >
                 <!-- <div class="row "  *ngFor="let gameArrayElement of gameForms.controls['gamesArray'].controls as FormArray; index as groupIndex;  trackBy:trackByFn;  "  > -->
-                <div class="row "  *ngFor="let gameArrayElement of this.gamesArray.controls as FormArray; index as groupIndex;  trackBy:trackByFn;  "  >
+                <!-- <div class="row "  *ngFor="let gameArrayElement of this.gamesArray.controls as FormArray; index as groupIndex;  trackBy:trackByFn;  "  > -->
                     <div class="col ">
                         <ng-container [formGroupName]="groupIndex">
                             <!-- <div> <h4> <input formControlName="groupName" class="form-control bg-transparent border-0 box-shadow-only-hover" /> </h4> </div> -->
@@ -21,6 +22,9 @@
                                 <!-- .controls[0].controls['groupName'].touched  -->
                                 <!-- htmlContext: ({{  gamesArray.controls[groupIndex]  }}) -->
                                 <!-- Exceeded recommended length  -->
+                                <!-- <div> {{ $any(gameArrayElement).controls['gamerPersonas'].length }} </div> -->
+                                <!-- <div> {{ $any(gameArrayElement).get('gamerPersonas')?.controls.length }} </div> -->
+                                <!-- <div> {{ this.gameForms.get('gamesArray.0.gamerPersonas.0')?.touched }} </div> -->
                             </div>
 
 
@@ -28,74 +32,83 @@
                             
 
                             <ng-container  formArrayName='gamerPersonas' > <!-- *ngIf="gameArrayElement.value.gamerPersonas" -->
+                                <!-- <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.get('gamerPersonas').controls ;  let gamePersonaIndex = index;  trackBy:trackByFn" >  -->
                                 <!-- <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.controls['gamerPersonas'] as FormArray  ;  let gamePersonaIndex = index;  trackBy:trackByFn" >  -->
-                                <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.value.gamerPersonas as FormArray  ;  let gamePersonaIndex = index;  trackBy:trackByFn" > 
+                                <!-- <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.value.gamerPersonas as FormArray  ;  let gamePersonaIndex = index;  trackBy:trackByFn" >  -->
+
+                                <div class="row align-self-center"  *ngFor = "let gamerPersona of $any(gameArrayElement).get('gamerPersonas')?.controls; 
+                                            let gamePersonaIndex = index;  trackBy:trackByFn" > 
                                 <!-- <ng-container  formArrayName='gamerPersonas' > *ngIf="gameArrayElement.value.gamerPersonas" -->
                                     <div class="col">
+<!-- <div>gamerPersona iteration {{gamePersonaIndex}} </div> -->
+                                        <ng-container [formGroupName]="gamePersonaIndex">
                                         <div class="card box-shadow-only-hover"  >
                                             <table class="table-responsive-sm "  >
                                                 <tr class="p-1 table-dark m-0 p-0 " > 
                                                     <td class="p-2 align-middle" style="width: 5rem;">
                                                         <div class="icon-50 theme-bg  border-radius-50 dark-font-color align-middle d-inline-block">
-                                                            <i class="string ">{{ gamerPersona.playOrder }}</i>                                                            
+                                                            <i class="string ">{{ gamerPersona.get('playOrder')?.value }}</i>                                                            
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <ng-container [formGroupName]="gamePersonaIndex">
-                                                            <div class="row bg-secondary  ">   <input formControlName="name" class="bg-transparent border-0 box-shadow-only-hover text-light font-weight-bold" />   </div>
+                                                        <!-- <ng-container [formGroupName]="gamePersonaIndex"> -->
+                                                        <div class="row bg-secondary  ">   <input formControlName="name" class="bg-transparent border-0 box-shadow-only-hover text-light font-weight-bold" />   </div>
 
-                                                            <div class="row table-dark">
-                                                            <ng-container *ngIf="gamerPersona.bowlingFrames" formArrayName='bowlingFrames'  >
-
-                                                                <div  class="col-xs table-dark border-right border-bottom border-secondary "  *ngFor = "let bowlingFrame of gamerPersona.bowlingFrames;  let bowlingFrameIndex = index;  trackBy:trackByFn"   > 
-                                                                    <ng-container [formGroupName]="bowlingFrameIndex">
-                                                                        <table class="table  table-dark m-0"  >
-                                                                            <ng-container *ngIf="bowlingFrame.scores" formArrayName='scores'  >
-                                                                                    <tr>
-                                                                                        <ng-container   *ngFor = "let scoreRecord of bowlingFrame.scores;  let ballIndex = index;  trackBy:trackByFn"   > 
-                                                                                            <ng-container [formGroupName]="ballIndex">
-                                                                                                <!-- {{scoreRecord.remainder}} {{scoreRecord.isEditable}}  min="0" max="10" -->
-                                                                                                <td style="width: 5rem;"> 
-                                                                                                    <input type="number" id="ballIndex"  formControlName="score" contenteditable="isEditable" maxlength="2" 
-                                                                                                        min=0 max="scoreRecord.remainderScore"
-                                                                                                        class="form-control text-light  table-dark bg-transparent border-0 "
-                                                                                                    />   
-                                                                                                    <!-- [ngClass]="{ 'is-invalid':  scoreRecord.errors }" -->
-    <!-- <div *ngIf="gameForms.controls['gamesArray'].value[groupIndex].gamerPersona[gamePersonaIndex].bowlingFrame[bowlingFrameIndex].scores[ballIndex].errors"> -->
-    <div class="text-light">
-        <!-- *ngIf="gameForms.value.gamesArray[groupIndex].gamerPersonas[gamePersonaIndex].bowlingFrames[bowlingFrameIndex].scores[ballIndex].errors" -->
-       >> {{ gameForms.value.gamesArray[groupIndex].gamerPersonas[gamePersonaIndex].bowlingFrames[bowlingFrameIndex].scores[ballIndex].score.errors?.max }} -> {{scoreRecord.remainderScore}} <<
-    </div>
-
-                                                                                                    <!-- <div *ngIf="scoreRecord.touched  && scoreRecord.invalid" class="alert alert-danger">
-                                                                                                        <div *ngIf="scoreRecord.errors && scoreRecord.errors.required">Score is required.</div>
-                                                                                                        <div *ngIf="scoreRecord.errors && scoreRecord.errors.score">Please, enter valid score.</div>
-                                                                                                    </div> -->
-
-                                                                                                </td>
+                                                        <div class="row table-dark">
+                                                        <ng-container *ngIf="gamerPersona.get( 'bowlingFrames' ) " formArrayName='bowlingFrames'  >
 
 
+                                                            <div  class="col-xs table-dark border-right border-bottom border-secondary "  
+                                                                            *ngFor = "let bowlingFrame of gamerPersona.get( 'bowlingFrames' )?.controls;  let bowlingFrameIndex = index;  trackBy:trackByFn"   > 
+                                                            <!-- <div  class="col-xs table-dark border-right border-bottom border-secondary "  
+                                                                            *ngFor = "let bowlingFrame of gamerPersona.bowlingFrames;  let bowlingFrameIndex = index;  trackBy:trackByFn"   >  -->
+                                                                <ng-container [formGroupName]="bowlingFrameIndex">
+<!-- <div>bowlingFrame iteration {{bowlingFrameIndex}} </div> -->
+                                                                    <table class="table  table-dark m-0"  >
+                                                                        <ng-container *ngIf="bowlingFrame.get( 'scores' )" formArrayName='scores'  >
+                                                                                <tr>
+                                                                                    <ng-container   *ngFor = "let scoreRecord of bowlingFrame.get( 'scores' ).controls;  let ballIndex = index;  trackBy:trackByFn"   > 
+                                                                                    <!-- <ng-container   *ngFor = "let scoreRecord of bowlingFrame.scores;  let ballIndex = index;  trackBy:trackByFn"   >  -->
+                                                                                        <ng-container [formGroupName]="ballIndex">
+                                                                                            <!-- {{scoreRecord.remainder}} {{scoreRecord.isEditable}}  min="0" max="10" -->
+                                                                                            <td style="width: 5rem;"> 
+                                                                                                <input type="number" id="ballIndex"  formControlName="score" contenteditable="isEditable" maxlength="2" 
+                                                                                                    min=0 max={{scoreRecord.controls.remainderScore}}
+                                                                                                    class="form-control text-light  table-dark bg-transparent border-0 "
+                                                                                                />   
+                                                                                                <!-- [ngClass]="{ 'is-invalid':  scoreRecord.errors }" -->
 
-                                                                                            </ng-container>
+
+                                                                                                <!-- <div *ngIf="scoreRecord.touched  && scoreRecord.invalid" class="alert alert-danger">
+                                                                                                    <div *ngIf="scoreRecord.errors && scoreRecord.errors.required">Score is required.</div>
+                                                                                                    <div *ngIf="scoreRecord.errors && scoreRecord.errors.score">Please, enter valid score.</div>
+                                                                                                </div> -->
+
+                                                                                            </td>
+
+
+
                                                                                         </ng-container>
+                                                                                    </ng-container>
 
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td class="col-xs table-dark border-top border-right border-light" align ="right"  >  {{ bowlingFrame.frameScore }} </td>
-                                                                                    </tr>
-                                                                            </ng-container>
-                                                                        </table>
-                                                                    </ng-container>
-                                                                </div>
-                                                            </ng-container>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td class="col-xs table-dark border-top border-right border-light" align ="right"  >  {{ bowlingFrame.frameScore }} </td>
+                                                                                </tr>
+                                                                        </ng-container>
+                                                                    </table>
+                                                                </ng-container>
                                                             </div>
                                                         </ng-container>
+                                                        </div>
+                                                        <!-- </ng-container> -->
 
                                                     </td>
                                                 </tr>
                                             </table>
 
                                         </div>
+                                        </ng-container>
                                     </div>
                             </div>
                         </ng-container>
@@ -108,3 +121,12 @@
 </form>
 <!-- <pre>{{ this.gameForms.value | json }}</pre> -->
 
+
+
+
+
+    <!-- <div *ngIf="gameForms.controls['gamesArray'].value[groupIndex].gamerPersona[gamePersonaIndex].bowlingFrame[bowlingFrameIndex].scores[ballIndex].errors"> -->
+    <!-- <div class="text-light"> -->
+        <!-- *ngIf="gameForms.value.gamesArray[groupIndex].gamerPersonas[gamePersonaIndex].bowlingFrames[bowlingFrameIndex].scores[ballIndex].errors" -->
+       <!-- >> {{ gameForms.value.gamesArray[groupIndex].gamerPersonas[gamePersonaIndex].bowlingFrames[bowlingFrameIndex].scores[ballIndex].score.errors?.max }} -> {{scoreRecord.remainderScore}} << -->
+    <!-- </div> -->
