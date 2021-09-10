@@ -26,11 +26,6 @@
                                 <!-- <div> {{ $any(gameArrayElement).get('gamerPersonas')?.controls.length }} </div> -->
                                 <!-- <div> {{ this.gameForms.get('gamesArray.0.gamerPersonas.0')?.touched }} </div> -->
                             </div>
-
-
-
-                            
-
                             <ng-container  formArrayName='gamerPersonas' > <!-- *ngIf="gameArrayElement.value.gamerPersonas" -->
                                 <!-- <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.get('gamerPersonas').controls ;  let gamePersonaIndex = index;  trackBy:trackByFn" >  -->
                                 <!-- <div class="row align-self-center"  *ngFor = "let gamerPersona of gameArrayElement.controls['gamerPersonas'] as FormArray  ;  let gamePersonaIndex = index;  trackBy:trackByFn" >  -->
@@ -52,57 +47,64 @@
                                                     </td>
                                                     <td>
                                                         <!-- <ng-container [formGroupName]="gamePersonaIndex"> -->
-                                                        <div class="row bg-secondary  ">   <input formControlName="name" class="bg-transparent border-0 box-shadow-only-hover text-light font-weight-bold" />   </div>
+                                                            <div class="row bg-secondary  ">   <input formControlName="name" class="bg-transparent border-0 box-shadow-only-hover text-light font-weight-bold" />   </div>
 
-                                                        <div class="row table-dark">
-                                                        <ng-container *ngIf="gamerPersona.get( 'bowlingFrames' ) " formArrayName='bowlingFrames'  >
-
-
-                                                            <div  class="col-xs table-dark border-right border-bottom border-secondary "  
-                                                                            *ngFor = "let bowlingFrame of gamerPersona.get( 'bowlingFrames' )?.controls;  let bowlingFrameIndex = index;  trackBy:trackByFn"   > 
-                                                            <!-- <div  class="col-xs table-dark border-right border-bottom border-secondary "  
-                                                                            *ngFor = "let bowlingFrame of gamerPersona.bowlingFrames;  let bowlingFrameIndex = index;  trackBy:trackByFn"   >  -->
-                                                                <ng-container [formGroupName]="bowlingFrameIndex">
-<!-- <div>bowlingFrame iteration {{bowlingFrameIndex}} </div> -->
-                                                                    <table class="table  table-dark m-0"  >
-                                                                        <ng-container *ngIf="bowlingFrame.get( 'scores' )" formArrayName='scores'  >
+                                                            <div class="row table-dark">
+                                                            <ng-container *ngIf="gamerPersona.get( 'bowlingFrames' ) " formArrayName='bowlingFrames'  >
+    
+    
+                                                                <div  class="col-xs table-dark border-right border-bottom border-secondary "  
+                                                                                *ngFor = "let bowlingFrame of gamerPersona.get( 'bowlingFrames' )?.controls;  let bowlingFrameIndex = index;  trackBy:trackByFn"   > 
+                                                                    <!-- <div  class="col-xs table-dark border-right border-bottom border-secondary "  
+                                                                                *ngFor = "let bowlingFrame of gamerPersona.bowlingFrames;  let bowlingFrameIndex = index;  trackBy:trackByFn"   >  -->
+    
+                                                                    <ng-container [formGroupName]="bowlingFrameIndex" [class.has-error]="bowlingFrame.invalid" >
+                                                                    <!-- <div class="form-group" [formGroupName]="bowlingFrameIndex" [class.has-error]="bowlingFrame.invalid"> -->
+    
+                                                                        <table class="table  table-dark m-0"  >
+                                                                            <ng-container *ngIf="bowlingFrame.get( 'scores' )" formArrayName='scores'  >
                                                                                 <tr>
-                                                                                    <ng-container   *ngFor = "let scoreRecord of bowlingFrame.get( 'scores' ).controls;  let ballIndex = index;  trackBy:trackByFn"   > 
+                                                                                    
+                                                                                    <ng-container   *ngFor = "let scoreRecord of bowlingFrame.get( 'scores' ).controls;  let ballIndex = index;  trackBy:trackByFn; "   > 
                                                                                     <!-- <ng-container   *ngFor = "let scoreRecord of bowlingFrame.scores;  let ballIndex = index;  trackBy:trackByFn"   >  -->
                                                                                         <ng-container [formGroupName]="ballIndex">
                                                                                             <!-- {{scoreRecord.remainder}} {{scoreRecord.isEditable}}  min="0" max="10" -->
                                                                                             <td style="width: 5rem;"> 
                                                                                                 <input type="number" id="ballIndex"  formControlName="score" contenteditable="isEditable" maxlength="2" 
-                                                                                                    min=0 max={{scoreRecord.controls.remainderScore}}
+                                                                                                    
                                                                                                     class="form-control text-light  table-dark bg-transparent border-0 "
-                                                                                                />   
+                                                                                                /> 
+                                                                                                <div> {{scoreRecord.touched}}  </div>
+                                                                                                <!-- <div *ngIf="scoreRecord.errors && scoreRecord.errors.required">Score is required.</div> -->
+    
+                                                                                                <!-- <div *ngIf="scoreRecord.get('score')?.errors?.max"> {{ scoreRecord.get('score')?.errors['max'] | json }} </div> -->
+                                                                                                <!-- <div>R: ({{scoreRecord.value.remainder}}) </div> -->
+    
                                                                                                 <!-- [ngClass]="{ 'is-invalid':  scoreRecord.errors }" -->
-
-
                                                                                                 <!-- <div *ngIf="scoreRecord.touched  && scoreRecord.invalid" class="alert alert-danger">
-                                                                                                    <div *ngIf="scoreRecord.errors && scoreRecord.errors.required">Score is required.</div>
                                                                                                     <div *ngIf="scoreRecord.errors && scoreRecord.errors.score">Please, enter valid score.</div>
                                                                                                 </div> -->
-
                                                                                             </td>
-
-
-
                                                                                         </ng-container>
                                                                                     </ng-container>
-
+    
                                                                                 </tr>
-                                                                                <tr>
-                                                                                    <td class="col-xs table-dark border-top border-right border-light" align ="right"  >  {{ bowlingFrame.frameScore }} </td>
-                                                                                </tr>
-                                                                        </ng-container>
-                                                                    </table>
-                                                                </ng-container>
+                                                                            </ng-container>
+                                                                            <tr>
+                                                                                <td class="col-xs table-dark border-top border-right border-light" align ="right"  >  {{ bowlingFrame.value.frameScore }} </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                        <!-- <div *ngIf="scoreRecord.get('score')?.errors?.max"> {{ scoreRecord.get('score')?.errors['max'] | json }} </div> -->
+                                                                        <small class="text-danger" *ngIf="bowlingFrame.errors.frameScoreValidator" > Total pins for a frame can not exceed 10. Scores values need to between 1 and 10 </small>
+    
+                                                                            
+                                                                        <!-- </ng-container> -->
+                                                                        <!-- </div> -->
+                                                                    <!-- </div> -->
+                                                                    </ng-container>
+                                                                </div>
+                                                            </ng-container>
                                                             </div>
-                                                        </ng-container>
-                                                        </div>
-                                                        <!-- </ng-container> -->
-
                                                     </td>
                                                 </tr>
                                             </table>

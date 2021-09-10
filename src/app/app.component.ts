@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, throwError } from 'rxjs'; //
 import { BowlingGame } from './shared/bowlinggame.model';
 import { BowlinggameService } from './shared/bowlinggame.service';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup , MinValidator, Validators} from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup , MinValidator, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 // import { stringify } from '@angular/compiler/src/util';
 //import { debounceTime, retry, switchMap, takeUntil } from 'rxjs/operators';
 
@@ -25,8 +25,6 @@ export class AppComponent implements OnInit , OnDestroy {
   constructor(private bowlingGameService : BowlinggameService , private fb: FormBuilder ) {
     // this.gameForms = fb.group({ games :  this.bowlingGames } ) ;
     this.gameForms = this.fb.group({ } ) ;
-    // AppComponent.jsonLib = JSON;
-    // console.log(JSON.stringify(this.gameForms));
 
   }
 
@@ -84,14 +82,27 @@ export class AppComponent implements OnInit , OnDestroy {
                     );
                     if( gamer.bowlingFrames != undefined && gamer.bowlingFrames != null ){
                         gamer.bowlingFrames.forEach( ( bowlingFrame, index3)  => {
-                          let bFrame = this.fb.group({
-                            frameNumber : new FormControl(bowlingFrame.frameNumber),
-                            // frameAttemptId : number,
-                            scores: this.fb.array( [] ) as FormArray , // bowlingFrame.scores 
-                            // frameScore: number,
-                            // IsInvalidated : boolean;
-                          });
-
+                          let bFrame = this.fb.group( 
+                            { 
+                              // controlsConfig : {
+                                frameNumber : new FormControl(bowlingFrame.frameNumber),
+                                // frameAttemptId : number,
+                                scores: this.fb.array( [] ) as FormArray , // bowlingFrame.scores 
+                                frameScore: bowlingFrame.frameScore,
+                                // IsInvalidated : boolean;
+                              // }
+                              // , options : {} 
+                            } ,
+                            {  validators: frameScoreValidator, updateOn: 'blur' }
+                          );
+                          // let bFrame = this.fb.group( {
+                          //       frameNumber : new FormControl(bowlingFrame.frameNumber),
+                          //       // frameAttemptId : number,
+                          //       scores: this.fb.array( [] ) as FormArray , // bowlingFrame.scores 
+                          //       frameScore: bowlingFrame.frameScore,
+                          //       // IsInvalidated : boolean;
+                          //   }
+                          // );
                           if( bowlingFrame.scores != undefined && bowlingFrame.scores != null ){
                               const frameMaxScore : number = 10;
                               let frameRawScoreTotal : number = 0;
@@ -104,17 +115,23 @@ export class AppComponent implements OnInit , OnDestroy {
                                 let bFrameScore = this.fb.group({
                                     ballIndex : new FormControl(index4),
                                     // score     : new FormControl( scoreValue,  [ Validators.required, Validators.min(0), Validators.max(frameRemainderScore), Validators.maxLength(2) ]    ),
-                                    score     : new FormControl( scoreValue,  [ Validators.required, Validators.min(0), 
-                                                                                ( frmControlInput : AbstractControl) => Validators.max( frameRemainderScore )( frmControlInput )
-                                                                                , Validators.maxLength(2) ]    ),
-                                    
-                                    
-                                    remainderScore : frameRemainderScore,
-                                    isEditable: isTurnAllowed,
+                                    // score     : new FormControl( scoreValue,  [ Validators.required, Validators.min(2), 
+                                    //                                             ( frmControlInput : AbstractControl) => Validators.max( frameRemainderScore )( frmControlInput )
+                                    //                                             , Validators.maxLength(2) ]    ),
+                                    //                                             remainderScore : frameRemainderScore,
+                                    score     : [ scoreValue
+                                                  // , { Validators: [ Validators.required, Validators.min(0), 
+                                                  //                         ( frmControlInput : AbstractControl) => Validators.max( frameRemainderScore )( frmControlInput )
+                                                  //                         , Validators.maxLength(2) ] 
+                                                  //               // , updateOn: 'blur'
+                                                  //             }
+                                                ],
+                                    remainder: frameRemainderScore,
+                                    isEditable: isTurnAllowed
                                     // validators: [ Validators.max(frameRemainderScore) ]
                                   });
-                                  frameRawScoreTotal = frameRawScoreTotal + scoreValue;
                                   (bFrame.controls.scores as FormArray).push(bFrameScore);
+                                  frameRawScoreTotal = frameRawScoreTotal + scoreValue;
                               } );
                               //TODO - repeated logic - modularize
                               const remainingBallTurns : number = 2 - ( bFrame.controls.scores as FormArray ).length ;
@@ -123,7 +140,11 @@ export class AppComponent implements OnInit , OnDestroy {
                                 frameRemainderScore = frameMaxScore - frameRawScoreTotal;
                                 const bFrameScore = this.fb.group({
                                   ballIndex : new FormControl(remainingBallTurns-1-index5),
-                                  score     : new FormControl( '',  Validators.max(frameRemainderScore) ) , //Validators.max(frameRemainderScore)
+                                score     : [ null 
+                                              // , [ Validators.required, Validators.min(0), 
+                                              //     ( frmControlInput : AbstractControl) => Validators.max( frameRemainderScore )( frmControlInput )
+                                              //     , Validators.maxLength(2) ]    
+                                            ],
                                   remainder : frameRemainderScore,
                                   isEditable : isTurnAllowed 
                                 });
@@ -193,4 +214,24 @@ export class AppComponent implements OnInit , OnDestroy {
     return index;
  }
 
+
+
 }
+
+
+
+export const frameScoreValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const scoreCntrlArray =  ( control.get('scores') as FormArray).controls ;
+  let rawScoreTotal : number = 0;
+  let isError : boolean = false ;
+  const currentFrameNumber = control.get('frameNumber')?.value;
+  const maxScoreAlloweForFrame = currentFrameNumber == 10 ? 30 : 10;
+  
+  for( let ballScore  of scoreCntrlArray ){
+    let currBallScoreValue = ( ballScore as FormGroup).controls.score.value;
+    rawScoreTotal = rawScoreTotal + currBallScoreValue;
+    isError = rawScoreTotal > maxScoreAlloweForFrame || currBallScoreValue < 0 ? true : false;
+    if(isError) break;
+  }
+  return {frameScoreValidator: isError} ;
+};
